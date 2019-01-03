@@ -1,1 +1,1 @@
-gcc -o tron main.c game.c screens.c -lglfw -lGL -lGLEW -MMD
+gcc -o tron main.c application.c screens.c -lglfw -lGL -lGLEW -MMD

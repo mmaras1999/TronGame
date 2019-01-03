@@ -3,6 +3,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-void StartGame(GLFWwindow*);
+void StartApp(GLFWwindow*);
 
 #endif

@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "game.h"
+#include "application.h"
 
 
 int main()
@@ -41,7 +41,7 @@ int main()
     	return -1;
 	}
 
-	StartGame(window);
+	StartApp(window);
 
 	return 0;
 }
