@@ -1,8 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <SFML/Audio.h>
+#include <SFML/Graphics.h>
+#include <SFML/System.h>
+#include <SFML/Window.h>
 
-void StartApp(GLFWwindow*);
+void StartApp(sfRenderWindow*);
 
 #endif

@@ -1,20 +1,24 @@
 #include "application.h"
 #include "screens.h"
 
-void StartApp(GLFWwindow* window)
+void StartApp(sfRenderWindow* window)
 {
 	Screen currentScreen;
+	sfEvent event; //handles events
 
-	CreateNewScreen(window, &currentScreen);
+	CreateNewScreen(window, &currentScreen); //Set up new scene (main menu)
 
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	currentScreen.event = &event;
 
-	while(!currentScreen.closed) //Game Loop
-	{
-   		glfwSwapBuffers(window);
-   		glfwPollEvents();
+    while (sfRenderWindow_isOpen(window)) //Game Loop
+    {
+        sfRenderWindow_clear(window, sfBlack);
 
-		(currentScreen.Draw)(&currentScreen); //Draw Screen
+        while (sfRenderWindow_pollEvent(window, &event)); //To prevent "window not responding" pop up
+
+        (currentScreen.Draw)(&currentScreen); //Draw Screen
 		(currentScreen.Update)(&currentScreen); //Update Game Logic
-	}
+
+        sfRenderWindow_display(window);
+    }
 }

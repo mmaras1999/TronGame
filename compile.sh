@@ -1,1 +1,1 @@
-gcc -o tron main.c application.c screens.c -lglfw -lGL -lGLEW -MMD
+gcc -Wall -O2 -std=c11 main.c application.c screens.c -lcsfml-system -lcsfml-graphics -lcsfml-window -lcsfml-audio -o TronGame
