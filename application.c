@@ -1,5 +1,6 @@
 #include "application.h"
 #include "screens.h"
+#include "MainMenu.h"
 
 void StartApp(sfRenderWindow* window)
 {
@@ -17,8 +18,8 @@ void StartApp(sfRenderWindow* window)
         while (sfRenderWindow_pollEvent(window, &event)); //To prevent "window not responding" pop up
 
         (currentScreen.Draw)(&currentScreen); //Draw Screen
-		(currentScreen.Update)(&currentScreen); //Update Game Logic
-
-        sfRenderWindow_display(window);
+        (currentScreen.Update)(&currentScreen); //Update Game Logic
+       
+       sfRenderWindow_display(window);
     }
 }

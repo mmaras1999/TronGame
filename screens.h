@@ -8,7 +8,7 @@
 #include <SFML/Window.h>
 #include <SFML/System.h>
 
-//#include "UI.h"
+#include "UI.h"
 
 typedef struct _Screen
 {
@@ -17,17 +17,19 @@ typedef struct _Screen
 	
 	short screenType; //screen type
 	
-	//int UIlayersCount; ???
-	//UI_layer* UIlayers; ???
+	int UIlayersCount;
+	UI_layer* UIlayers;
 
 	//Graphics
 	int fontsCount;
+	int textCount;
 	int texturesCount;
 	int spritesCount;
 
 	sfTexture ** textures;
 	sfFont ** fonts;
 	sfSprite ** sprites;
+	sfText ** text;
 
 	//Screen Functions
 	void (*Update)(struct _Screen*); //Update screen
@@ -41,15 +43,11 @@ typedef struct _Screen
 */
 
 void CreateNewScreen(sfRenderWindow*, Screen*);
-void CreateMainMenu(sfRenderWindow*, Screen*);
 void CreateGameScreen(sfRenderWindow*, Screen*);
 void ChangeScreen(Screen*, int);
 
-void UpdateMainMenu(Screen*);
 void UpdateGameScreen(Screen*);
-void DrawMainMenu(Screen*);
 void DrawGameScreen(Screen*);
-void CloseMainMenu(Screen*);
 void CloseGameScreen(Screen*);
 void DestroyResources(Screen*);
 int CheckLoadedResources(Screen*);

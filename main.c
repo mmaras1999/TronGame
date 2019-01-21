@@ -6,14 +6,14 @@
 #include <SFML/Graphics.h>
 #include <SFML/System.h>
 
-#include "constants.h"
+#include "defines.h"
 #include "application.h"
 
 sfRenderWindow* CreateWindow() //Create new window
 {
 	sfRenderWindow * window;
 	sfVideoMode mode = {SCREEN_WIDTH, SCREEN_HEIGHT, 32};
-	window = sfRenderWindow_create(mode, "SFML window", sfResize | sfClose, NULL);
+	window = sfRenderWindow_create(mode, "Tron Game", sfNone, NULL);
 
 	return window;
 }
