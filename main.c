@@ -14,6 +14,7 @@ sfRenderWindow* CreateWindow() //Create new window
 	sfRenderWindow * window;
 	sfVideoMode mode = {SCREEN_WIDTH, SCREEN_HEIGHT, 32};
 	window = sfRenderWindow_create(mode, "Tron Game", sfNone, NULL);
+    sfRenderWindow_setFramerateLimit(window, MAX_FPS);
 
 	return window;
 }

@@ -42,33 +42,6 @@ void ChangeScreen(Screen* screen, int screenType)
 	}
 }
 
-void CreateGameScreen(sfRenderWindow* window, Screen* screen)
-{	
-	printf("In game screen\n");
-	screen->window = window;
-
-	screen->screenType = 1;
-
-	screen->Update = &UpdateGameScreen;
-	screen->Draw = &DrawGameScreen;
-	screen->Close = &CloseGameScreen;
-}
-
-void UpdateGameScreen(Screen* this)
-{
-
-}
-
-void DrawGameScreen(Screen* this)
-{
-
-}
-
-void CloseGameScreen(Screen * this)
-{
-
-}
-
 int CheckLoadedResources(Screen* this)
 {
 	FOR(i, 0, this->fontsCount)

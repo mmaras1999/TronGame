@@ -46,9 +46,6 @@ void CreateNewScreen(sfRenderWindow*, Screen*);
 void CreateGameScreen(sfRenderWindow*, Screen*);
 void ChangeScreen(Screen*, int);
 
-void UpdateGameScreen(Screen*);
-void DrawGameScreen(Screen*);
-void CloseGameScreen(Screen*);
 void DestroyResources(Screen*);
 int CheckLoadedResources(Screen*);
 
