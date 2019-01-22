@@ -1,1 +1,1 @@
-tron: screens.c screens.h
+tron: UI.c UI.h

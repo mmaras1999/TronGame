@@ -1,47 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <SFML/Audio.h>
+#include <SFML/Window.h>
+#include <SFML/Graphics.h>
+#include <SFML/System.h>
 
-#include "game.h"
+#include "defines.h"
+#include "application.h"
 
+sfRenderWindow* CreateWindow() //Create new window
+{
+	sfRenderWindow * window;
+	sfVideoMode mode = {SCREEN_WIDTH, SCREEN_HEIGHT, 32};
+	window = sfRenderWindow_create(mode, "Tron Game", sfNone, NULL);
+    sfRenderWindow_setFramerateLimit(window, MAX_FPS);
+
+	return window;
+}
+
+void DestroyWindow(sfRenderWindow* window) //Destroy window
+{
+	sfRenderWindow_destroy(window);
+}
 
 int main()
 {
+    sfRenderWindow* window = CreateWindow();
 
-	if(!glfwInit())
-	{
-		fprintf(stderr, "Failed to initialize GLFW.\n");
-		return -1;
-	}
+    if (!window) //if window is NULL
+    {
+    	printf("Fatal Error: error when creating a window\n");
+    	return 1;
+    }
 
-	glfwWindowHint(GLFW_SAMPLES, 8); // 8x antialiasing	
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
+    StartApp(window); //Start Application
 
-	// Open a window and create its OpenGL context
-	GLFWwindow* window; // (In the accompanying source code, this variable is global for simplicity)
-	window = glfwCreateWindow( 1024, 768, "TronGame", NULL, NULL);
-	
-	if(window == NULL)
-	{
-   		fprintf( stderr, "Failed to open GLFW window.\n" );
-   	 	glfwTerminate();
-   	 	return -1;
-	}
-
-	glfwMakeContextCurrent(window); // Initialize GLEW
-	glewExperimental = 1; // Needed in core profile
-	
-	if (glewInit() != GLEW_OK) 
-	{
-   	 	fprintf(stderr, "Failed to initialize GLEW\n");
-    	return -1;
-	}
-
-	StartGame(window);
+    DestroyWindow(window);
 
 	return 0;
 }

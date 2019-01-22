@@ -1,14 +1,40 @@
 #ifndef SCREENS_H
 #define SCREENS_H
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <SFML/Audio.h>
+#include <SFML/Graphics.h>
+#include <SFML/Window.h>
+#include <SFML/System.h>
+
+#include "UI.h"
 
 typedef struct _Screen
 {
-	GLFWwindow* window;
-	short int screenType;
-	void (*Update)(struct _Screen*);
+	sfRenderWindow* window; //pointer to window
+	sfEvent* event; //pointer to event handler
+	
+	short screenType; //screen type
+	
+	int UIlayersCount;
+	UI_layer* UIlayers;
 
+	//Graphics
+	int fontsCount;
+	int textCount;
+	int texturesCount;
+	int spritesCount;
+
+	sfTexture ** textures;
+	sfFont ** fonts;
+	sfSprite ** sprites;
+	sfText ** text;
+
+	//Screen Functions
+	void (*Update)(struct _Screen*); //Update screen
+	void (*Draw)(struct _Screen*); //Draw screen
+	void (*Close)(struct _Screen*); //Close screen (destroy all screen components)
 } Screen;
 
 /*screenType - type of screen:
@@ -16,9 +42,11 @@ typedef struct _Screen
 1 - Game Screen
 */
 
-Screen* CreateNewScreen(GLFWwindow*);
+void CreateNewScreen(sfRenderWindow*, Screen*);
+void CreateGameScreen(sfRenderWindow*, Screen*);
+void ChangeScreen(Screen*, int);
 
-void UpdateMainMenu();
-void UpdateGameScreen();
+void DestroyResources(Screen*);
+int CheckLoadedResources(Screen*);
 
 #endif
