@@ -5,7 +5,6 @@ void CreateMainMenu(sfRenderWindow* window, Screen* screen)
 {
 	printf("In main menu\n");
 	screen->window = window;
-
 	screen->screenType = 0;
 
 	screen->Update = &UpdateMainMenu;

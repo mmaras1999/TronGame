@@ -9,6 +9,7 @@
 #include <SFML/System.h>
 
 #include "UI.h"
+#include "gameManager.h"
 
 typedef struct _Screen
 {
@@ -17,6 +18,12 @@ typedef struct _Screen
 	
 	short screenType; //screen type
 	
+	sfClock * clock;
+
+	//Game
+	GameManager manager;
+
+	//UI
 	int UIlayersCount;
 	UI_layer* UIlayers;
 
