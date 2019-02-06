@@ -21,4 +21,8 @@ void SetupMenuButtons(UI_layer*, Screen*);
 void UpdateMenuButtons(UI_layer*, Screen*);
 void DrawMenuButtons(UI_layer*, Screen*);
 
+void SetupGameSettings(UI_layer*, Screen*);
+void UpdateGameSettings(UI_layer*, Screen*);
+void DrawGameSettings(UI_layer*, Screen*);
+
 #endif

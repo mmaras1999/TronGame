@@ -19,4 +19,9 @@ typedef long long LL;
 
 #define MINIMAX_DEPTH 5
 
+//COLOR DEFINES
+#define sfGray (sfColor_fromRGB(100, 100, 100))
+#define sfDarkBlue (sfColor_fromRGB(12, 25, 42))
+
+
 #endif

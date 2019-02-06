@@ -2,6 +2,7 @@
 #define PLAYERS_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <SFML/Audio.h>
 #include <SFML/Graphics.h>
@@ -20,6 +21,7 @@ typedef struct _player
 {
 	int playerID;
 	int isHuman;
+	int score;
 
 	sfVector2i position;
 	int direction;
@@ -27,9 +29,17 @@ typedef struct _player
 
 	sfKeyCode KeyRight;
 	sfKeyCode KeyLeft;
+	int keyType;
+
+	int AIlevel;
+
 	int leftClicked;
 	int rightClicked;
-	//color
+	int leftReleased;
+	int rightReleased;
+	
+	sfColor color;
+	int colorID;	
 
 	void (*getInput)(Board*, int, struct _player*);
 } Player;
@@ -38,5 +48,6 @@ typedef struct _player
 
 void getHumanInput(Board*, int, Player*);
 void getAIInputHard(Board*, int, Player*);
+void getAIInputEasy(Board*, int, Player*);
 
 #endif

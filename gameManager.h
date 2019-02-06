@@ -17,6 +17,7 @@ typedef struct _gameManager
 	int playerTurn;
 	
 	int paused;
+	int escDown;
 	int won;
 	int round;
 	int totalRounds;
@@ -26,6 +27,7 @@ typedef struct _gameManager
 void StartGame(GameManager*);
 void ResetGame(GameManager*);
 void UpdateGame(GameManager*, sfClock*);
+void CheckInput(GameManager*);
 void MakeTurn(GameManager*);
 
 #endif

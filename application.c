@@ -18,6 +18,6 @@ void StartApp(sfRenderWindow* window)
 
         while (sfRenderWindow_pollEvent(window, &event)); //To prevent "window not responding" pop up
        
-       sfRenderWindow_display(window);
+        sfRenderWindow_display(window);
     }
 }

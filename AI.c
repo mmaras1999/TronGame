@@ -143,6 +143,7 @@ LL minimax(int player, int depth, int me, Player* players, Board* board, int * n
 
 		//CALCULATE RESULT
 		LL closer = 0;
+		LL edges = 0;
 		LL opponent = 0;
 
 		pushQueue(&bfs, CreateNewQuery(me, players[me].position.x, players[me].position.y));
@@ -160,6 +161,11 @@ LL minimax(int player, int depth, int me, Player* players, Board* board, int * n
 
 				if (nextX >= 0 && nextX < BOARD_WIDTH && nextY >= 0 && nextY < BOARD_HEIGHT && !(board->blocked[nextX][nextY]))
 				{
+					if(v.player == me)
+					{
+						++edges;
+					}
+
 					if (!distBoard[nextX][nextY])
 					{
 						distBoard[nextX][nextY] = 1;
@@ -179,6 +185,6 @@ LL minimax(int player, int depth, int me, Player* players, Board* board, int * n
 			}
 		}
 
-		return closer * 1000ll + opponent * (-1ll);
+		return 1000ll* edges + closer * 1000ll + opponent * (-1ll);
 	}
 }

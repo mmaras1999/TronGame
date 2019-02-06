@@ -72,6 +72,8 @@ void DestroyResources(Screen* this)
 
 	free(this->fonts);
 
+	printf("Fonts Destroyed\n");
+
 	FOR(i, 0, this->textCount)
 	{
 		sfText_destroy(this->text[i]);

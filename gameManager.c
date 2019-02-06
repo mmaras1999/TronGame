@@ -3,21 +3,6 @@
 
 void StartGame(GameManager* manager)
 {
-	manager->paused = 0;
-	manager->totalRounds = 2;
-
-	manager->players[0].isHuman = 1;
-	manager->players[0].KeyRight = sfKeyRight;
-	manager->players[0].KeyLeft = sfKeyLeft;
-	manager->players[0].getInput = &getHumanInput;
-	manager->players[0].playerID = 0;
-
-	manager->players[1].isHuman = 0;
-	manager->players[1].KeyRight = sfKeyD;
-	manager->players[1].KeyLeft = sfKeyA;
-	manager->players[1].getInput = &getAIInputHard;
-	manager->players[1].playerID = 1;
-
 	ResetGame(manager);
 }
 
@@ -26,6 +11,7 @@ void ResetGame(GameManager* manager)
 	manager->won = 0;
 	manager->playerTurn = 1;
 	manager->paused = 0;
+	manager->escDown = 1;
 	manager->turnTime = TURN_TIME;
 
 	FOR(i, 0, BOARD_WIDTH)
@@ -70,12 +56,16 @@ void ResetGame(GameManager* manager)
 	manager->players[0].prevDirection = dir;
 	manager->players[0].rightClicked = 0;
 	manager->players[0].leftClicked = 0;
+	manager->players[0].rightReleased = 1;
+	manager->players[0].leftReleased = 1;
 
 	manager->players[1].position = position2;
 	manager->players[1].direction = dir2;
 	manager->players[1].prevDirection = dir2;
 	manager->players[1].rightClicked = 0;
 	manager->players[1].leftClicked = 0;
+	manager->players[1].rightReleased = 1;
+	manager->players[1].leftReleased = 1;
 
 	manager->board.blocked[manager->players[0].position.x][manager->players[0].position.y] = 1;
 	manager->board.blocked[manager->players[1].position.x][manager->players[1].position.y] = 2;
@@ -86,30 +76,105 @@ void UpdateGame(GameManager* manager, sfClock * clock)
 	int deltaTime = sfTime_asMilliseconds(sfClock_getElapsedTime(clock));
 	sfClock_restart(clock);
 
-	if(!manager->won)
+	if(!sfKeyboard_isKeyPressed(sfKeyEscape))
 	{
-		manager->turnTime -= deltaTime;
+		manager->escDown = 0;
+	}
 
-		if(!manager->paused && manager->turnTime <= 0)
+	if(sfKeyboard_isKeyPressed(sfKeyEscape) && !manager->escDown)
+	{
+		manager->escDown = 1;
+		++manager->paused;
+		manager->paused %= 2;
+		return;
+	}
+
+	if(!manager->paused)
+	{
+		CheckInput(manager);
+
+		if(!manager->won)
 		{
-			manager->turnTime = TURN_TIME;
-			(manager->players[manager->playerTurn].getInput)(&(manager->board), manager->playerTurn, manager->players);
+			manager->turnTime -= deltaTime;
 
-			MakeTurn(manager);
+			if(!manager->paused && manager->turnTime <= 0)
+			{
+				manager->turnTime = TURN_TIME;
+				(manager->players[manager->playerTurn].getInput)(&(manager->board), manager->playerTurn, manager->players);
+
+				MakeTurn(manager);
+			}
+		}
+		else
+		{
+			printf("Player %d won!\n", manager->won);
+			ResetGame(manager);
 		}
 	}
-	else
-	{
-		printf("Player %d won!\n", manager->won);
-		ResetGame(manager);
-	}
+}
+
+void CheckInput(GameManager* manager)
+{
+    if(sfKeyboard_isKeyPressed(manager->players[0].KeyLeft))
+    {
+    	if(manager->players[0].leftReleased)
+    	{
+	       	manager->players[0].leftClicked = 1;
+	       	manager->players[0].rightClicked = 0;
+    		manager->players[0].leftReleased = 0;
+    	}
+    }
+    else
+    {
+    	manager->players[0].leftReleased = 1;
+    }
+
+    if(sfKeyboard_isKeyPressed(manager->players[0].KeyRight))
+    {
+    	if(manager->players[0].rightReleased)
+    	{
+		 	manager->players[0].leftClicked = 0;
+	       	manager->players[0].rightClicked = 1;
+	       	manager->players[0].rightReleased = 0;
+       	}
+    }
+    else
+    {
+    	manager->players[0].rightReleased = 1;
+    }
+
+     if(sfKeyboard_isKeyPressed(manager->players[1].KeyLeft))
+    {
+    	if(manager->players[1].leftReleased)
+    	{
+	       	manager->players[1].leftClicked = 1;
+	       	manager->players[1].rightClicked = 0;
+    		manager->players[1].leftReleased = 0;
+    	}
+    }
+    else
+    {
+    	manager->players[1].leftReleased = 1;
+    }
+
+    if(sfKeyboard_isKeyPressed(manager->players[1].KeyRight))
+    {
+    	if(manager->players[1].rightReleased)
+    	{
+		 	manager->players[1].leftClicked = 0;
+	       	manager->players[1].rightClicked = 1;
+	       	manager->players[1].rightReleased = 0;
+       	}
+    }
+    else
+    {
+    	manager->players[1].rightReleased = 1;
+    }
 }
 
 void MakeTurn(GameManager* manager)
 {
 	int p = manager->playerTurn;
-
-
 
 	int moves[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
@@ -118,7 +183,7 @@ void MakeTurn(GameManager* manager)
 
 	if(nextX < 0 || nextX >= BOARD_WIDTH || nextY < 0 || nextY >= BOARD_HEIGHT || manager->board.blocked[nextX][nextY])
 	{
-		manager->won = p + 1;
+		manager->won = (p + 1) % 2 + 1;
 		return;
 	}
 
