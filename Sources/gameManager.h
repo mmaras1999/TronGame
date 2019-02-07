@@ -15,16 +15,18 @@ typedef struct _gameManager
 
 	int turnTime;
 	int playerTurn;
+
+	int escDown;
+	int enterDown;
+	int mouseClicked;
 	
 	int paused;
-	int escDown;
 	int won;
 	int round;
 	int totalRounds;
 
 } GameManager;
 
-void StartGame(GameManager*);
 void ResetGame(GameManager*);
 void UpdateGame(GameManager*, sfClock*);
 void CheckInput(GameManager*);

@@ -11,6 +11,21 @@ void StartApp(sfRenderWindow* window)
 
     while (sfRenderWindow_isOpen(window)) //Game Loop
     {
+        if(!sfKeyboard_isKeyPressed(sfKeyReturn)) //Enter released
+        {
+            currentScreen.manager.enterDown = 0;
+        }
+
+        if(!sfKeyboard_isKeyPressed(sfKeyEscape)) //Escape released
+        {
+            currentScreen.manager.escDown = 0;
+        }
+
+        if(!sfMouse_isButtonPressed(sfMouseLeft)) //Left Mouse Button Released
+        {
+            currentScreen.manager.mouseClicked = 0;
+        }
+
         sfRenderWindow_clear(window, sfBlack);
 
         (currentScreen.Draw)(&currentScreen); //Draw Screen

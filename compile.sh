@@ -1,1 +1,1 @@
-gcc -Wall -O3 -std=c11 main.c application.c screens.c UI.c MainMenu.c GameScreen.c  gameManager.c players.c board.c AI.c -lcsfml-system -lcsfml-graphics -lcsfml-window -lcsfml-audio -o TronGame
+gcc -Wall -O3 -std=c11 Sources/main.c Sources/application.c Sources/screens.c Sources/UI.c Sources/MainMenu.c Sources/GameScreen.c Sources/gameManager.c Sources/players.c Sources/AI.c -lcsfml-system -lcsfml-graphics -lcsfml-window -lcsfml-audio -o TronGame

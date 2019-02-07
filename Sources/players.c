@@ -38,7 +38,7 @@ void getAIInputEasy(Board* board, int p, Player* players)
 	
 		if (nextX >= 0 && nextX < BOARD_WIDTH && nextY >= 0 && nextY < BOARD_HEIGHT && !(board->blocked[nextX][nextY]))
 		{
-			LL d = abs(players[(p + 1) & 1].position.x - nextX) + abs(players[(p + 1) & 1].position.y);
+			LL d = abs(players[(p + 1) & 1].position.x - nextX) + abs(players[(p + 1) & 1].position.y - nextY);
 
 			if(d < best)
 			{

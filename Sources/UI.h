@@ -34,8 +34,6 @@ typedef struct _ui_layer
 {	
 	int updating; //is updating
 	int drawing; //is drawing
-	
-	int mouseReleased;
 
 	int imageCount;
 	int buttonCount;

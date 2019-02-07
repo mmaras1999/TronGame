@@ -213,84 +213,91 @@ void SetupMenuButtons(UI_layer * ui, Screen * screen)
 
 void UpdateMenuButtons(UI_layer* ui, Screen* screen)
 {
-	sfVector2i mousePos = sfMouse_getPositionRenderWindow(screen->window);
-
-	//START GAME button
-	#define START_B ui->buttons[0]
-
-	if(sfKeyboard_isKeyPressed(sfKeyReturn)) //Enter pressed
+	if(ui->updating)
 	{
-		ui->drawing = 0;
-		ui->updating = 0;
-		screen->UIlayers[0].drawing = 0;
-		screen->UIlayers[0].updating = 0;
-		screen->UIlayers[2].drawing = 1;
-		screen->UIlayers[2].updating = 1;
-		return;
-	}
+		sfVector2i mousePos = sfMouse_getPositionRenderWindow(screen->window);
 
-	if(START_B.highlighted)
-	{
-		if(START_B.x <= mousePos.x && mousePos.x <= START_B.x + START_B.width && START_B.y <= mousePos.y && mousePos.y <= START_B.y + START_B.height)
+		//START GAME button
+		#define START_B ui->buttons[0]
+
+		if(sfKeyboard_isKeyPressed(sfKeyReturn) && !(screen->manager.enterDown)) //Enter pressed
 		{
-			if(sfMouse_isButtonPressed(sfMouseLeft))
+			screen->manager.enterDown = 1;
+			ui->drawing = 0;
+			ui->updating = 0;
+			screen->UIlayers[0].drawing = 0;
+			screen->UIlayers[0].updating = 0;
+			screen->UIlayers[2].drawing = 1;
+			screen->UIlayers[2].updating = 1;
+			return;
+		}
+
+		if(START_B.highlighted)
+		{
+			if(START_B.x <= mousePos.x && mousePos.x <= START_B.x + START_B.width && START_B.y <= mousePos.y && mousePos.y <= START_B.y + START_B.height)
 			{
-				ui->drawing = 0;
-				ui->updating = 0;
-				screen->UIlayers[0].drawing = 0;
-				screen->UIlayers[0].updating = 0;
-				screen->UIlayers[2].drawing = 1;
-				screen->UIlayers[2].updating = 1;
-				return;
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+					ui->drawing = 0;
+					ui->updating = 0;
+					screen->UIlayers[0].drawing = 0;
+					screen->UIlayers[0].updating = 0;
+					screen->UIlayers[2].drawing = 1;
+					screen->UIlayers[2].updating = 1;
+					return;
+				}
+			}
+			else
+			{
+				START_B.highlighted = 0;
+				sfText_setFillColor(ui->text[0].text, sfWhite);
 			}
 		}
 		else
 		{
-			START_B.highlighted = 0;
-			sfText_setFillColor(ui->text[0].text, sfWhite);
-		}
-	}
-	else
-	{
-		if(START_B.x <= mousePos.x && mousePos.x <= START_B.x + START_B.width && START_B.y <= mousePos.y && mousePos.y <= START_B.y + START_B.height)
-		{
-			START_B.highlighted = 1;
-			sfColor highl = sfColor_fromRGB(200, 200, 200);
-			sfText_setFillColor(ui->text[0].text, highl);
-		}
-	}
-
-	//EXIT button
-	#define EXIT_B ui->buttons[1]
-	if(sfKeyboard_isKeyPressed(sfKeyEscape)) //Exit Game
-	{
-		ChangeScreen(screen, -1); //Close App
-		return;
-	}
-
-	if(EXIT_B.highlighted)
-	{
-		if(EXIT_B.x <= mousePos.x && mousePos.x <= EXIT_B.x + EXIT_B.width && EXIT_B.y <= mousePos.y && mousePos.y <= EXIT_B.y + EXIT_B.height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft))
+			if(START_B.x <= mousePos.x && mousePos.x <= START_B.x + START_B.width && START_B.y <= mousePos.y && mousePos.y <= START_B.y + START_B.height)
 			{
-				ChangeScreen(screen, -1);
-				return;
+				START_B.highlighted = 1;
+				sfColor highl = sfColor_fromRGB(200, 200, 200);
+				sfText_setFillColor(ui->text[0].text, highl);
+			}
+		}
+
+		//EXIT button
+		#define EXIT_B ui->buttons[1]
+		if(sfKeyboard_isKeyPressed(sfKeyEscape) && !(screen->manager.escDown)) //Exit Game
+		{
+			screen->manager.escDown = 1;
+			ChangeScreen(screen, -1); //Close App
+			return;
+		}
+
+		if(EXIT_B.highlighted)
+		{
+			if(EXIT_B.x <= mousePos.x && mousePos.x <= EXIT_B.x + EXIT_B.width && EXIT_B.y <= mousePos.y && mousePos.y <= EXIT_B.y + EXIT_B.height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+					ChangeScreen(screen, -1);
+					return;
+				}
+			}
+			else
+			{
+				EXIT_B.highlighted = 0;
+				sfText_setFillColor(ui->text[1].text, sfWhite);
 			}
 		}
 		else
 		{
-			EXIT_B.highlighted = 0;
-			sfText_setFillColor(ui->text[1].text, sfWhite);
-		}
-	}
-	else
-	{
-		if(EXIT_B.x <= mousePos.x && mousePos.x <= EXIT_B.x + EXIT_B.width && EXIT_B.y <= mousePos.y && mousePos.y <= EXIT_B.y + EXIT_B.height)
-		{
-			EXIT_B.highlighted = 1;
-			sfColor highl = sfColor_fromRGB(200, 200, 200);
-			sfText_setFillColor(ui->text[1].text, highl);
+			if(EXIT_B.x <= mousePos.x && mousePos.x <= EXIT_B.x + EXIT_B.width && EXIT_B.y <= mousePos.y && mousePos.y <= EXIT_B.y + EXIT_B.height)
+			{
+				EXIT_B.highlighted = 1;
+				sfColor highl = sfColor_fromRGB(200, 200, 200);
+				sfText_setFillColor(ui->text[1].text, highl);
+			}
 		}
 	}
 }
@@ -307,11 +314,11 @@ void DrawMenuButtons(UI_layer* ui, Screen* screen)
 //PlayerSettings
 void SetupGameSettings(UI_layer* ui, Screen* screen)
 {
-	ui->mouseReleased = 0;
-
 	screen->manager.paused = 0;
 	screen->manager.totalRounds = 2;
 	screen->manager.escDown = 1;
+	screen->manager.enterDown = 1;
+	screen->manager.mouseClicked = 1;
 
 	screen->manager.players[0].isHuman = 1;
 	screen->manager.players[0].score = 0;
@@ -794,586 +801,602 @@ void SetupGameSettings(UI_layer* ui, Screen* screen)
 
 void UpdateGameSettings(UI_layer* ui, Screen* screen)
 {
-	//choices:
-	char* opt1[2] = {"AI", "Human"};
-	char* humanOpt2[2] = {"Arrow\n Keys", "A & D"};
-	char* AIOpt2[2] = {"Easy", "Hard"};
-	sfColor colors[6] = { sfBlue, sfRed, sfGreen, sfMagenta, sfCyan, sfYellow };
-
-	sfVector2f origin;
-	sfVector2f newPos;
-	sfFloatRect bounds;
-
-	sfVector2i mousePos = sfMouse_getPositionRenderWindow(screen->window);
-
-	if(!sfMouse_isButtonPressed(sfMouseLeft))
+	if(ui->updating)
 	{
-		ui->mouseReleased = 1;
-	}
+		//choices:
+		char* opt1[2] = {"AI", "Human"};
+		char* humanOpt2[2] = {"Arrow\n Keys", "A & D"};
+		char* AIOpt2[2] = {"Easy", "Hard"};
+		sfColor colors[6] = { sfBlue, sfRed, sfGreen, sfMagenta, sfCyan, sfYellow };
 
-	if(sfKeyboard_isKeyPressed(sfKeyEscape)) //Exit Game
-	{
-		ChangeScreen(screen, -1); //Close App
-		return;
-	}
+		sfVector2f origin;
+		sfVector2f newPos;
+		sfFloatRect bounds;
 
-	//SETTINGS
-	{
-		if(ui->buttons[0].x <= mousePos.x && mousePos.x <= ui->buttons[0].x + ui->buttons[0].width && ui->buttons[0].y <= mousePos.y && mousePos.y <= ui->buttons[0].y + ui->buttons[0].height)
+		sfVector2i mousePos = sfMouse_getPositionRenderWindow(screen->window);
+
+		//SETTINGS
 		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
+			if(ui->buttons[0].x <= mousePos.x && mousePos.x <= ui->buttons[0].x + ui->buttons[0].width && ui->buttons[0].y <= mousePos.y && mousePos.y <= ui->buttons[0].y + ui->buttons[0].height)
 			{
-				ui->mouseReleased = 0;
-			
-				screen->manager.players[0].isHuman = (screen->manager.players[0].isHuman + 1) & 1;
-
-				sfText_setString(ui->text[7].text, opt1[screen->manager.players[0].isHuman]);
-
-				if(screen->manager.players[0].isHuman)
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
 				{
-					sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
-					screen->manager.players[0].getInput = &getHumanInput;
-				}
-				else
-				{
-					sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
-
-					if(screen->manager.players[0].AIlevel)
-					{
-						screen->manager.players[0].getInput = &getAIInputHard;
-					}
-					else
-					{
-						screen->manager.players[0].getInput = &getAIInputEasy;
-					}
-				}
-
-				bounds = sfText_getLocalBounds(ui->text[7].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[7].text, origin);
-				newPos.x = SCREEN_WIDTH / 4.0f + 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 20;
-				sfText_setPosition(ui->text[7].text, newPos);
-
-				bounds = sfText_getLocalBounds(ui->text[11].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[11].text, origin);
-				newPos.x = SCREEN_WIDTH / 4.0f + 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[11].text, newPos);
-			}
-		}
-
-		if(ui->buttons[1].x <= mousePos.x && mousePos.x <= ui->buttons[1].x + ui->buttons[1].width && ui->buttons[1].y <= mousePos.y && mousePos.y <= ui->buttons[1].y + ui->buttons[1].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-			
-				screen->manager.players[0].isHuman = (screen->manager.players[0].isHuman + 1) & 1;
-
-				sfText_setString(ui->text[7].text, opt1[screen->manager.players[0].isHuman]);
-
-				if(screen->manager.players[0].isHuman)
-				{
-					sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
-					screen->manager.players[0].getInput = &getHumanInput;
-				}
-				else
-				{
-					sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
-
-					if(screen->manager.players[0].AIlevel)
-					{
-						screen->manager.players[0].getInput = &getAIInputHard;
-					}
-					else
-					{
-						screen->manager.players[0].getInput = &getAIInputEasy;
-					}
-				}
-
+					screen->manager.mouseClicked = 1;
 				
+					screen->manager.players[0].isHuman = (screen->manager.players[0].isHuman + 1) & 1;
 
-				bounds = sfText_getLocalBounds(ui->text[7].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[7].text, origin);
-				newPos.x = SCREEN_WIDTH / 4.0f + 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 20;
-				sfText_setPosition(ui->text[7].text, newPos);
+					sfText_setString(ui->text[7].text, opt1[screen->manager.players[0].isHuman]);
 
-				bounds = sfText_getLocalBounds(ui->text[11].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[11].text, origin);
-				newPos.x = SCREEN_WIDTH / 4.0f + 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[11].text, newPos);
+					if(screen->manager.players[0].isHuman)
+					{
+						sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
+						screen->manager.players[0].getInput = &getHumanInput;
+					}
+					else
+					{
+						sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
+
+						if(screen->manager.players[0].AIlevel)
+						{
+							screen->manager.players[0].getInput = &getAIInputHard;
+						}
+						else
+						{
+							screen->manager.players[0].getInput = &getAIInputEasy;
+						}
+					}
+
+					bounds = sfText_getLocalBounds(ui->text[7].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[7].text, origin);
+					newPos.x = SCREEN_WIDTH / 4.0f + 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 20;
+					sfText_setPosition(ui->text[7].text, newPos);
+
+					bounds = sfText_getLocalBounds(ui->text[11].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[11].text, origin);
+					newPos.x = SCREEN_WIDTH / 4.0f + 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[11].text, newPos);
+				}
 			}
-		}
 
-		if(ui->buttons[2].x <= mousePos.x && mousePos.x <= ui->buttons[2].x + ui->buttons[2].width && ui->buttons[2].y <= mousePos.y && mousePos.y <= ui->buttons[2].y + ui->buttons[2].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
+			if(ui->buttons[1].x <= mousePos.x && mousePos.x <= ui->buttons[1].x + ui->buttons[1].width && ui->buttons[1].y <= mousePos.y && mousePos.y <= ui->buttons[1].y + ui->buttons[1].height)
 			{
-				ui->mouseReleased = 0;
-			
-				screen->manager.players[1].isHuman = (screen->manager.players[1].isHuman + 1) & 1;
-
-				sfText_setString(ui->text[8].text, opt1[screen->manager.players[1].isHuman]);
-
-				if(screen->manager.players[1].isHuman)
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
 				{
-					sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
-					screen->manager.players[1].getInput = &getHumanInput;
-				}
-				else
-				{
-					sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
+					screen->manager.mouseClicked = 1;
 
-					if(screen->manager.players[1].AIlevel)
+					screen->manager.players[0].isHuman = (screen->manager.players[0].isHuman + 1) & 1;
+
+					sfText_setString(ui->text[7].text, opt1[screen->manager.players[0].isHuman]);
+
+					if(screen->manager.players[0].isHuman)
 					{
-						screen->manager.players[1].getInput = &getAIInputHard;
+						sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
+						screen->manager.players[0].getInput = &getHumanInput;
 					}
 					else
 					{
-						screen->manager.players[1].getInput = &getAIInputEasy;
+						sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
+
+						if(screen->manager.players[0].AIlevel)
+						{
+							screen->manager.players[0].getInput = &getAIInputHard;
+						}
+						else
+						{
+							screen->manager.players[0].getInput = &getAIInputEasy;
+						}
 					}
+
+					
+
+					bounds = sfText_getLocalBounds(ui->text[7].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[7].text, origin);
+					newPos.x = SCREEN_WIDTH / 4.0f + 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 20;
+					sfText_setPosition(ui->text[7].text, newPos);
+
+					bounds = sfText_getLocalBounds(ui->text[11].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[11].text, origin);
+					newPos.x = SCREEN_WIDTH / 4.0f + 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[11].text, newPos);
 				}
-
-				bounds = sfText_getLocalBounds(ui->text[8].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[8].text, origin);
-				newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 20;
-				sfText_setPosition(ui->text[8].text, newPos);
-
-				bounds = sfText_getLocalBounds(ui->text[12].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[12].text, origin);
-				newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[12].text, newPos);
 			}
-		}
 
-		if(ui->buttons[3].x <= mousePos.x && mousePos.x <= ui->buttons[3].x + ui->buttons[3].width && ui->buttons[3].y <= mousePos.y && mousePos.y <= ui->buttons[3].y + ui->buttons[3].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
+			if(ui->buttons[2].x <= mousePos.x && mousePos.x <= ui->buttons[2].x + ui->buttons[2].width && ui->buttons[2].y <= mousePos.y && mousePos.y <= ui->buttons[2].y + ui->buttons[2].height)
 			{
-				ui->mouseReleased = 0;
-			
-				screen->manager.players[1].isHuman = (screen->manager.players[1].isHuman + 1) & 1;
-
-				sfText_setString(ui->text[8].text, opt1[screen->manager.players[1].isHuman]);
-
-				if(screen->manager.players[1].isHuman)
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
 				{
-					sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
-					screen->manager.players[1].getInput = &getHumanInput;
-				}
-				else
-				{
-					sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
-
-					if(screen->manager.players[1].AIlevel)
-					{
-						screen->manager.players[1].getInput = &getAIInputHard;
-					}
-					else
-					{
-						screen->manager.players[1].getInput = &getAIInputEasy;
-					}
-				}
-
-				bounds = sfText_getLocalBounds(ui->text[8].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[8].text, origin);
-				newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 20;
-				sfText_setPosition(ui->text[8].text, newPos);
-
-				bounds = sfText_getLocalBounds(ui->text[12].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[12].text, origin);
-				newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[12].text, newPos);
-			}
-		}
-
-		if(ui->buttons[4].x <= mousePos.x && mousePos.x <= ui->buttons[4].x + ui->buttons[4].width && ui->buttons[4].y <= mousePos.y && mousePos.y <= ui->buttons[4].y + ui->buttons[4].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-
-				if(screen->manager.players[0].isHuman)
-				{
-					screen->manager.players[0].keyType = (screen->manager.players[0].keyType + 1) & 1;
-
-					if(!screen->manager.players[0].keyType)
-					{
-						screen->manager.players[0].KeyLeft = sfKeyLeft;
-						screen->manager.players[0].KeyRight = sfKeyRight;
-					}
-					else
-					{
-						screen->manager.players[0].KeyLeft = sfKeyA;
-						screen->manager.players[0].KeyRight = sfKeyD;
-					}
-
-					sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
-				}
-				else
-				{
-					screen->manager.players[0].AIlevel = (screen->manager.players[0].AIlevel + 1) & 1;
-
-					if(!screen->manager.players[0].AIlevel)
-					{
-						screen->manager.players[0].getInput = &getAIInputEasy;
-					}
-					else
-					{
-						screen->manager.players[0].getInput = &getAIInputHard;
-					}
-
-					sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
-				}
-
-				bounds = sfText_getLocalBounds(ui->text[11].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[11].text, origin);
-				newPos.x = SCREEN_WIDTH / 4.0f + 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[11].text, newPos);
-			}
-		}
-
-		if(ui->buttons[5].x <= mousePos.x && mousePos.x <= ui->buttons[5].x + ui->buttons[5].width && ui->buttons[5].y <= mousePos.y && mousePos.y <= ui->buttons[5].y + ui->buttons[5].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-
-				if(screen->manager.players[0].isHuman)
-				{
-					screen->manager.players[0].keyType = (screen->manager.players[0].keyType + 1) & 1;
-
-					if(!screen->manager.players[0].keyType)
-					{
-						screen->manager.players[0].KeyLeft = sfKeyLeft;
-						screen->manager.players[0].KeyRight = sfKeyRight;
-					}
-					else
-					{
-						screen->manager.players[0].KeyLeft = sfKeyA;
-						screen->manager.players[0].KeyRight = sfKeyD;
-					}
-
-					sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
-				}
-				else
-				{
-					screen->manager.players[0].AIlevel = (screen->manager.players[0].AIlevel + 1) & 1;
-
-					if(!screen->manager.players[0].AIlevel)
-					{
-						screen->manager.players[0].getInput = &getAIInputEasy;
-					}
-					else
-					{
-						screen->manager.players[0].getInput = &getAIInputHard;
-					}
-
-					sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
-				}
-
-				bounds = sfText_getLocalBounds(ui->text[11].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[11].text, origin);
-				newPos.x = SCREEN_WIDTH / 4.0f + 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[11].text, newPos);
-			}
-		}
-
-		if(ui->buttons[6].x <= mousePos.x && mousePos.x <= ui->buttons[6].x + ui->buttons[6].width && ui->buttons[6].y <= mousePos.y && mousePos.y <= ui->buttons[6].y + ui->buttons[6].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-
-				if(screen->manager.players[1].isHuman)
-				{
-					screen->manager.players[1].keyType = (screen->manager.players[1].keyType + 1) & 1;
-
-					if(!screen->manager.players[1].keyType)
-					{
-						screen->manager.players[1].KeyLeft = sfKeyLeft;
-						screen->manager.players[1].KeyRight = sfKeyRight;
-					}
-					else
-					{
-						screen->manager.players[1].KeyLeft = sfKeyA;
-						screen->manager.players[1].KeyRight = sfKeyD;
-					}
-
-					sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
-				}
-				else
-				{
-					screen->manager.players[1].AIlevel = (screen->manager.players[1].AIlevel + 1) & 1;
-
-					if(!screen->manager.players[1].AIlevel)
-					{
-						screen->manager.players[1].getInput = &getAIInputEasy;
-					}
-					else
-					{
-						screen->manager.players[1].getInput = &getAIInputHard;
-					}
-
-					sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
-				}
-
-				bounds = sfText_getLocalBounds(ui->text[12].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[12].text, origin);
-				newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[12].text, newPos);
-			}
-		}
-
-		if(ui->buttons[7].x <= mousePos.x && mousePos.x <= ui->buttons[7].x + ui->buttons[7].width && ui->buttons[7].y <= mousePos.y && mousePos.y <= ui->buttons[7].y + ui->buttons[7].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-
-				if(screen->manager.players[1].isHuman)
-				{
-					screen->manager.players[1].keyType = (screen->manager.players[1].keyType + 1) & 1;
-
-					if(!screen->manager.players[1].keyType)
-					{
-						screen->manager.players[1].KeyLeft = sfKeyLeft;
-						screen->manager.players[1].KeyRight = sfKeyRight;
-					}
-					else
-					{
-						screen->manager.players[1].KeyLeft = sfKeyA;
-						screen->manager.players[1].KeyRight = sfKeyD;
-					}
-
-					sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
-				}
-				else
-				{
-					screen->manager.players[1].AIlevel = (screen->manager.players[1].AIlevel + 1) & 1;
-
-					if(!screen->manager.players[1].AIlevel)
-					{
-						screen->manager.players[1].getInput = &getAIInputEasy;
-					}
-					else
-					{
-						screen->manager.players[1].getInput = &getAIInputHard;
-					}
-
-					sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
-				}
-						
-				bounds = sfText_getLocalBounds(ui->text[12].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[12].text, origin);
-				newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
-				newPos.y = SCREEN_HEIGHT / 4.0f + 100;
-				sfText_setPosition(ui->text[12].text, newPos);
-			}
-		}
-
-		if(ui->buttons[8].x <= mousePos.x && mousePos.x <= ui->buttons[8].x + ui->buttons[8].width && ui->buttons[8].y <= mousePos.y && mousePos.y <= ui->buttons[8].y + ui->buttons[8].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-
-				screen->manager.players[0].colorID = (screen->manager.players[0].colorID + 5) % 6;
-
-				sfText_setFillColor(ui->text[15].text, colors[screen->manager.players[0].colorID]);
-				sfText_setFillColor(ui->text[16].text, colors[screen->manager.players[0].colorID]);
-				sfText_setFillColor(ui->text[17].text, colors[screen->manager.players[0].colorID]);
-
-				screen->manager.players[0].color = colors[screen->manager.players[0].colorID];
-			}
-		}
-
-		if(ui->buttons[9].x <= mousePos.x && mousePos.x <= ui->buttons[9].x + ui->buttons[9].width && ui->buttons[9].y <= mousePos.y && mousePos.y <= ui->buttons[9].y + ui->buttons[9].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-			
-				screen->manager.players[0].colorID = (screen->manager.players[0].colorID + 1) % 6;
-
-				sfText_setFillColor(ui->text[15].text, colors[screen->manager.players[0].colorID]);
-				sfText_setFillColor(ui->text[16].text, colors[screen->manager.players[0].colorID]);
-				sfText_setFillColor(ui->text[17].text, colors[screen->manager.players[0].colorID]);
-
-				screen->manager.players[0].color = colors[screen->manager.players[0].colorID];
-			}
-		}
-
-		if(ui->buttons[10].x <= mousePos.x && mousePos.x <= ui->buttons[10].x + ui->buttons[10].width && ui->buttons[10].y <= mousePos.y && mousePos.y <= ui->buttons[10].y + ui->buttons[10].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-
+					screen->manager.mouseClicked = 1;
 				
-				screen->manager.players[1].colorID = (screen->manager.players[1].colorID + 5) % 6;
+					screen->manager.players[1].isHuman = (screen->manager.players[1].isHuman + 1) & 1;
 
-				sfText_setFillColor(ui->text[18].text, colors[screen->manager.players[1].colorID]);
-				sfText_setFillColor(ui->text[19].text, colors[screen->manager.players[1].colorID]);
-				sfText_setFillColor(ui->text[20].text, colors[screen->manager.players[1].colorID]);
+					sfText_setString(ui->text[8].text, opt1[screen->manager.players[1].isHuman]);
 
-				screen->manager.players[1].color = colors[screen->manager.players[1].colorID];
-			}
-		}
+					if(screen->manager.players[1].isHuman)
+					{
+						sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
+						screen->manager.players[1].getInput = &getHumanInput;
+					}
+					else
+					{
+						sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
 
-		if(ui->buttons[11].x <= mousePos.x && mousePos.x <= ui->buttons[11].x + ui->buttons[11].width && ui->buttons[11].y <= mousePos.y && mousePos.y <= ui->buttons[11].y + ui->buttons[11].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
+						if(screen->manager.players[1].AIlevel)
+						{
+							screen->manager.players[1].getInput = &getAIInputHard;
+						}
+						else
+						{
+							screen->manager.players[1].getInput = &getAIInputEasy;
+						}
+					}
 
-				screen->manager.players[1].colorID = (screen->manager.players[1].colorID + 1) % 6;
+					bounds = sfText_getLocalBounds(ui->text[8].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[8].text, origin);
+					newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 20;
+					sfText_setPosition(ui->text[8].text, newPos);
 
-				sfText_setFillColor(ui->text[18].text, colors[screen->manager.players[1].colorID]);
-				sfText_setFillColor(ui->text[19].text, colors[screen->manager.players[1].colorID]);
-				sfText_setFillColor(ui->text[20].text, colors[screen->manager.players[1].colorID]);
-
-				screen->manager.players[1].color = colors[screen->manager.players[1].colorID];
-			}
-		}
-
-		if(ui->buttons[14].x <= mousePos.x && mousePos.x <= ui->buttons[14].x + ui->buttons[14].width && ui->buttons[14].y <= mousePos.y && mousePos.y <= ui->buttons[14].y + ui->buttons[14].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
-
-				--screen->manager.totalRounds;
-
-				if(screen->manager.totalRounds < 1)
-				{
-					screen->manager.totalRounds = 1;
+					bounds = sfText_getLocalBounds(ui->text[12].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[12].text, origin);
+					newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[12].text, newPos);
 				}
+			}
 
-				sprintf(ui->text[26].txt, "%d", screen->manager.totalRounds);
+			if(ui->buttons[3].x <= mousePos.x && mousePos.x <= ui->buttons[3].x + ui->buttons[3].width && ui->buttons[3].y <= mousePos.y && mousePos.y <= ui->buttons[3].y + ui->buttons[3].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+				
+					screen->manager.players[1].isHuman = (screen->manager.players[1].isHuman + 1) & 1;
 
-				sfText_setString(ui->text[26].text, ui->text[26].txt);
+					sfText_setString(ui->text[8].text, opt1[screen->manager.players[1].isHuman]);
 
-				bounds = sfText_getLocalBounds(ui->text[26].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[26].text, origin);
-				newPos.x = SCREEN_WIDTH / 2.0f + 75;
-				newPos.y = 4.0f * SCREEN_HEIGHT / 5.0f - 100;
-				sfText_setPosition(ui->text[26].text, newPos);
+					if(screen->manager.players[1].isHuman)
+					{
+						sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
+						screen->manager.players[1].getInput = &getHumanInput;
+					}
+					else
+					{
+						sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
+
+						if(screen->manager.players[1].AIlevel)
+						{
+							screen->manager.players[1].getInput = &getAIInputHard;
+						}
+						else
+						{
+							screen->manager.players[1].getInput = &getAIInputEasy;
+						}
+					}
+
+					bounds = sfText_getLocalBounds(ui->text[8].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[8].text, origin);
+					newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 20;
+					sfText_setPosition(ui->text[8].text, newPos);
+
+					bounds = sfText_getLocalBounds(ui->text[12].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[12].text, origin);
+					newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[12].text, newPos);
+				}
+			}
+
+			if(ui->buttons[4].x <= mousePos.x && mousePos.x <= ui->buttons[4].x + ui->buttons[4].width && ui->buttons[4].y <= mousePos.y && mousePos.y <= ui->buttons[4].y + ui->buttons[4].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					if(screen->manager.players[0].isHuman)
+					{
+						screen->manager.players[0].keyType = (screen->manager.players[0].keyType + 1) & 1;
+
+						if(!screen->manager.players[0].keyType)
+						{
+							screen->manager.players[0].KeyLeft = sfKeyLeft;
+							screen->manager.players[0].KeyRight = sfKeyRight;
+						}
+						else
+						{
+							screen->manager.players[0].KeyLeft = sfKeyA;
+							screen->manager.players[0].KeyRight = sfKeyD;
+						}
+
+						sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
+					}
+					else
+					{
+						screen->manager.players[0].AIlevel = (screen->manager.players[0].AIlevel + 1) & 1;
+
+						if(!screen->manager.players[0].AIlevel)
+						{
+							screen->manager.players[0].getInput = &getAIInputEasy;
+						}
+						else
+						{
+							screen->manager.players[0].getInput = &getAIInputHard;
+						}
+
+						sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
+					}
+
+					bounds = sfText_getLocalBounds(ui->text[11].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[11].text, origin);
+					newPos.x = SCREEN_WIDTH / 4.0f + 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[11].text, newPos);
+				}
+			}
+
+			if(ui->buttons[5].x <= mousePos.x && mousePos.x <= ui->buttons[5].x + ui->buttons[5].width && ui->buttons[5].y <= mousePos.y && mousePos.y <= ui->buttons[5].y + ui->buttons[5].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					if(screen->manager.players[0].isHuman)
+					{
+						screen->manager.players[0].keyType = (screen->manager.players[0].keyType + 1) & 1;
+
+						if(!screen->manager.players[0].keyType)
+						{
+							screen->manager.players[0].KeyLeft = sfKeyLeft;
+							screen->manager.players[0].KeyRight = sfKeyRight;
+						}
+						else
+						{
+							screen->manager.players[0].KeyLeft = sfKeyA;
+							screen->manager.players[0].KeyRight = sfKeyD;
+						}
+
+						sfText_setString(ui->text[11].text, humanOpt2[screen->manager.players[0].keyType]);
+					}
+					else
+					{
+						screen->manager.players[0].AIlevel = (screen->manager.players[0].AIlevel + 1) & 1;
+
+						if(!screen->manager.players[0].AIlevel)
+						{
+							screen->manager.players[0].getInput = &getAIInputEasy;
+						}
+						else
+						{
+							screen->manager.players[0].getInput = &getAIInputHard;
+						}
+
+						sfText_setString(ui->text[11].text, AIOpt2[screen->manager.players[0].AIlevel]);
+					}
+
+					bounds = sfText_getLocalBounds(ui->text[11].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[11].text, origin);
+					newPos.x = SCREEN_WIDTH / 4.0f + 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[11].text, newPos);
+				}
+			}
+
+			if(ui->buttons[6].x <= mousePos.x && mousePos.x <= ui->buttons[6].x + ui->buttons[6].width && ui->buttons[6].y <= mousePos.y && mousePos.y <= ui->buttons[6].y + ui->buttons[6].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					if(screen->manager.players[1].isHuman)
+					{
+						screen->manager.players[1].keyType = (screen->manager.players[1].keyType + 1) & 1;
+
+						if(!screen->manager.players[1].keyType)
+						{
+							screen->manager.players[1].KeyLeft = sfKeyLeft;
+							screen->manager.players[1].KeyRight = sfKeyRight;
+						}
+						else
+						{
+							screen->manager.players[1].KeyLeft = sfKeyA;
+							screen->manager.players[1].KeyRight = sfKeyD;
+						}
+
+						sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
+					}
+					else
+					{
+						screen->manager.players[1].AIlevel = (screen->manager.players[1].AIlevel + 1) & 1;
+
+						if(!screen->manager.players[1].AIlevel)
+						{
+							screen->manager.players[1].getInput = &getAIInputEasy;
+						}
+						else
+						{
+							screen->manager.players[1].getInput = &getAIInputHard;
+						}
+
+						sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
+					}
+
+					bounds = sfText_getLocalBounds(ui->text[12].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[12].text, origin);
+					newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[12].text, newPos);
+				}
+			}
+
+			if(ui->buttons[7].x <= mousePos.x && mousePos.x <= ui->buttons[7].x + ui->buttons[7].width && ui->buttons[7].y <= mousePos.y && mousePos.y <= ui->buttons[7].y + ui->buttons[7].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					if(screen->manager.players[1].isHuman)
+					{
+						screen->manager.players[1].keyType = (screen->manager.players[1].keyType + 1) & 1;
+
+						if(!screen->manager.players[1].keyType)
+						{
+							screen->manager.players[1].KeyLeft = sfKeyLeft;
+							screen->manager.players[1].KeyRight = sfKeyRight;
+						}
+						else
+						{
+							screen->manager.players[1].KeyLeft = sfKeyA;
+							screen->manager.players[1].KeyRight = sfKeyD;
+						}
+
+						sfText_setString(ui->text[12].text, humanOpt2[screen->manager.players[1].keyType]);
+					}
+					else
+					{
+						screen->manager.players[1].AIlevel = (screen->manager.players[1].AIlevel + 1) & 1;
+
+						if(!screen->manager.players[1].AIlevel)
+						{
+							screen->manager.players[1].getInput = &getAIInputEasy;
+						}
+						else
+						{
+							screen->manager.players[1].getInput = &getAIInputHard;
+						}
+
+						sfText_setString(ui->text[12].text, AIOpt2[screen->manager.players[1].AIlevel]);
+					}
+							
+					bounds = sfText_getLocalBounds(ui->text[12].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[12].text, origin);
+					newPos.x = 3.0f * SCREEN_WIDTH / 4.0f - 35;
+					newPos.y = SCREEN_HEIGHT / 4.0f + 100;
+					sfText_setPosition(ui->text[12].text, newPos);
+				}
+			}
+
+			if(ui->buttons[8].x <= mousePos.x && mousePos.x <= ui->buttons[8].x + ui->buttons[8].width && ui->buttons[8].y <= mousePos.y && mousePos.y <= ui->buttons[8].y + ui->buttons[8].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					screen->manager.players[0].colorID = (screen->manager.players[0].colorID + 5) % 6;
+
+					sfText_setFillColor(ui->text[15].text, colors[screen->manager.players[0].colorID]);
+					sfText_setFillColor(ui->text[16].text, colors[screen->manager.players[0].colorID]);
+					sfText_setFillColor(ui->text[17].text, colors[screen->manager.players[0].colorID]);
+
+					screen->manager.players[0].color = colors[screen->manager.players[0].colorID];
+				}
+			}
+
+			if(ui->buttons[9].x <= mousePos.x && mousePos.x <= ui->buttons[9].x + ui->buttons[9].width && ui->buttons[9].y <= mousePos.y && mousePos.y <= ui->buttons[9].y + ui->buttons[9].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+				
+					screen->manager.players[0].colorID = (screen->manager.players[0].colorID + 1) % 6;
+
+					sfText_setFillColor(ui->text[15].text, colors[screen->manager.players[0].colorID]);
+					sfText_setFillColor(ui->text[16].text, colors[screen->manager.players[0].colorID]);
+					sfText_setFillColor(ui->text[17].text, colors[screen->manager.players[0].colorID]);
+
+					screen->manager.players[0].color = colors[screen->manager.players[0].colorID];
+				}
+			}
+
+			if(ui->buttons[10].x <= mousePos.x && mousePos.x <= ui->buttons[10].x + ui->buttons[10].width && ui->buttons[10].y <= mousePos.y && mousePos.y <= ui->buttons[10].y + ui->buttons[10].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+					
+					screen->manager.players[1].colorID = (screen->manager.players[1].colorID + 5) % 6;
+
+					sfText_setFillColor(ui->text[18].text, colors[screen->manager.players[1].colorID]);
+					sfText_setFillColor(ui->text[19].text, colors[screen->manager.players[1].colorID]);
+					sfText_setFillColor(ui->text[20].text, colors[screen->manager.players[1].colorID]);
+
+					screen->manager.players[1].color = colors[screen->manager.players[1].colorID];
+				}
+			}
+
+			if(ui->buttons[11].x <= mousePos.x && mousePos.x <= ui->buttons[11].x + ui->buttons[11].width && ui->buttons[11].y <= mousePos.y && mousePos.y <= ui->buttons[11].y + ui->buttons[11].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					screen->manager.players[1].colorID = (screen->manager.players[1].colorID + 1) % 6;
+
+					sfText_setFillColor(ui->text[18].text, colors[screen->manager.players[1].colorID]);
+					sfText_setFillColor(ui->text[19].text, colors[screen->manager.players[1].colorID]);
+					sfText_setFillColor(ui->text[20].text, colors[screen->manager.players[1].colorID]);
+
+					screen->manager.players[1].color = colors[screen->manager.players[1].colorID];
+				}
+			}
+
+			if(ui->buttons[14].x <= mousePos.x && mousePos.x <= ui->buttons[14].x + ui->buttons[14].width && ui->buttons[14].y <= mousePos.y && mousePos.y <= ui->buttons[14].y + ui->buttons[14].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					--screen->manager.totalRounds;
+
+					if(screen->manager.totalRounds < 1)
+					{
+						screen->manager.totalRounds = 1;
+					}
+
+					sprintf(ui->text[26].txt, "%d", screen->manager.totalRounds);
+
+					sfText_setString(ui->text[26].text, ui->text[26].txt);
+
+					bounds = sfText_getLocalBounds(ui->text[26].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[26].text, origin);
+					newPos.x = SCREEN_WIDTH / 2.0f + 75;
+					newPos.y = 4.0f * SCREEN_HEIGHT / 5.0f - 100;
+					sfText_setPosition(ui->text[26].text, newPos);
+				}
+			}
+
+			if(ui->buttons[15].x <= mousePos.x && mousePos.x <= ui->buttons[15].x + ui->buttons[15].width && ui->buttons[15].y <= mousePos.y && mousePos.y <= ui->buttons[15].y + ui->buttons[15].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					++screen->manager.totalRounds;
+
+					sprintf(ui->text[26].txt, "%d", screen->manager.totalRounds);
+
+					sfText_setString(ui->text[26].text, ui->text[26].txt);
+
+					bounds = sfText_getLocalBounds(ui->text[26].text);
+					origin.x = bounds.left + bounds.width / 2.0f;
+					origin.y = bounds.top  + bounds.height / 2.0f;
+					sfText_setOrigin(ui->text[26].text, origin);
+					newPos.x = SCREEN_WIDTH / 2.0f + 75;
+					newPos.y = 4.0f * SCREEN_HEIGHT / 5.0f - 100;
+					sfText_setPosition(ui->text[26].text, newPos);
+				}
 			}
 		}
 
-		if(ui->buttons[15].x <= mousePos.x && mousePos.x <= ui->buttons[15].x + ui->buttons[15].width && ui->buttons[15].y <= mousePos.y && mousePos.y <= ui->buttons[15].y + ui->buttons[15].height)
+		if(sfKeyboard_isKeyPressed(sfKeyReturn) && !(screen->manager.enterDown))
 		{
-			if(sfMouse_isButtonPressed(sfMouseLeft) && ui->mouseReleased)
-			{
-				ui->mouseReleased = 0;
+			printf("running...\n");
+			screen->manager.enterDown = 1;
 
-				++screen->manager.totalRounds;
-
-				sprintf(ui->text[26].txt, "%d", screen->manager.totalRounds);
-
-				sfText_setString(ui->text[26].text, ui->text[26].txt);
-
-				bounds = sfText_getLocalBounds(ui->text[26].text);
-				origin.x = bounds.left + bounds.width / 2.0f;
-				origin.y = bounds.top  + bounds.height / 2.0f;
-				sfText_setOrigin(ui->text[26].text, origin);
-				newPos.x = SCREEN_WIDTH / 2.0f + 75;
-				newPos.y = 4.0f * SCREEN_HEIGHT / 5.0f - 100;
-				sfText_setPosition(ui->text[26].text, newPos);
-			}
+			ChangeScreen(screen, 1);
+			return;
 		}
-	}
 
-	if(ui->buttons[12].highlighted)
-	{
-		if(ui->buttons[12].x <= mousePos.x && mousePos.x <= ui->buttons[12].x + ui->buttons[12].width && ui->buttons[12].y <= mousePos.y && mousePos.y <= ui->buttons[12].y + ui->buttons[12].height)
+		if(ui->buttons[12].highlighted)
 		{
-			if(sfMouse_isButtonPressed(sfMouseLeft))
+			if(ui->buttons[12].x <= mousePos.x && mousePos.x <= ui->buttons[12].x + ui->buttons[12].width && ui->buttons[12].y <= mousePos.y && mousePos.y <= ui->buttons[12].y + ui->buttons[12].height)
 			{
-				ChangeScreen(screen, 1);
-				return;
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+					ChangeScreen(screen, 1);
+					return;
+				}
+			}
+			else
+			{
+				ui->buttons[12].highlighted = 0;
+				sfText_setFillColor(ui->text[21].text, sfWhite);
 			}
 		}
 		else
 		{
-			ui->buttons[12].highlighted = 0;
-			sfText_setFillColor(ui->text[21].text, sfWhite);
-		}
-	}
-	else
-	{
-		if(ui->buttons[12].x <= mousePos.x && mousePos.x <= ui->buttons[12].x + ui->buttons[12].width && ui->buttons[12].y <= mousePos.y && mousePos.y <= ui->buttons[12].y + ui->buttons[12].height)
-		{
-			ui->buttons[12].highlighted = 1;
-			sfColor highl = sfColor_fromRGB(200, 200, 200);
-			sfText_setFillColor(ui->text[21].text, highl);
-		}
-	}
-
-	if(ui->buttons[13].highlighted)
-	{
-		if(ui->buttons[13].x <= mousePos.x && mousePos.x <= ui->buttons[13].x + ui->buttons[13].width && ui->buttons[13].y <= mousePos.y && mousePos.y <= ui->buttons[13].y + ui->buttons[13].height)
-		{
-			if(sfMouse_isButtonPressed(sfMouseLeft))
+			if(ui->buttons[12].x <= mousePos.x && mousePos.x <= ui->buttons[12].x + ui->buttons[12].width && ui->buttons[12].y <= mousePos.y && mousePos.y <= ui->buttons[12].y + ui->buttons[12].height)
 			{
-				ui->updating = 0;
-				ui->drawing = 0;
-				screen->UIlayers[0].drawing = 1;
-				screen->UIlayers[0].updating = 1;
-				screen->UIlayers[1].drawing = 1;
-				screen->UIlayers[1].updating = 1;
-				return;
+				ui->buttons[12].highlighted = 1;
+				sfColor highl = sfColor_fromRGB(200, 200, 200);
+				sfText_setFillColor(ui->text[21].text, highl);
+			}
+		}
+
+		if(sfKeyboard_isKeyPressed(sfKeyEscape) && !(screen->manager.escDown))
+		{
+			screen->manager.escDown = 1;
+
+			ui->updating = 0;
+			ui->drawing = 0;
+			screen->UIlayers[0].drawing = 1;
+			screen->UIlayers[0].updating = 1;
+			screen->UIlayers[1].drawing = 1;
+			screen->UIlayers[1].updating = 1;
+			return;
+		}
+
+		if(ui->buttons[13].highlighted)
+		{
+			if(ui->buttons[13].x <= mousePos.x && mousePos.x <= ui->buttons[13].x + ui->buttons[13].width && ui->buttons[13].y <= mousePos.y && mousePos.y <= ui->buttons[13].y + ui->buttons[13].height)
+			{
+				if(sfMouse_isButtonPressed(sfMouseLeft) && !(screen->manager.mouseClicked))
+				{
+					screen->manager.mouseClicked = 1;
+
+					ui->updating = 0;
+					ui->drawing = 0;
+					screen->UIlayers[0].drawing = 1;
+					screen->UIlayers[0].updating = 1;
+					screen->UIlayers[1].drawing = 1;
+					screen->UIlayers[1].updating = 1;
+					return;
+				}
+			}
+			else
+			{
+				ui->buttons[13].highlighted = 0;
+				sfText_setFillColor(ui->text[22].text, sfWhite);
 			}
 		}
 		else
 		{
-			ui->buttons[13].highlighted = 0;
-			sfText_setFillColor(ui->text[22].text, sfWhite);
-		}
-	}
-	else
-	{
-		if(ui->buttons[13].x <= mousePos.x && mousePos.x <= ui->buttons[13].x + ui->buttons[13].width && ui->buttons[13].y <= mousePos.y && mousePos.y <= ui->buttons[13].y + ui->buttons[13].height)
-		{
-			ui->buttons[13].highlighted = 1;
-			sfColor highl = sfColor_fromRGB(200, 200, 200);
-			sfText_setFillColor(ui->text[22].text, highl);
+			if(ui->buttons[13].x <= mousePos.x && mousePos.x <= ui->buttons[13].x + ui->buttons[13].width && ui->buttons[13].y <= mousePos.y && mousePos.y <= ui->buttons[13].y + ui->buttons[13].height)
+			{
+				ui->buttons[13].highlighted = 1;
+				sfColor highl = sfColor_fromRGB(200, 200, 200);
+				sfText_setFillColor(ui->text[22].text, highl);
+			}
 		}
 	}
 }

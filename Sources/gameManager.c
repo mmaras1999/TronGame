@@ -1,11 +1,6 @@
 #include "gameManager.h"
 #include "defines.h"
 
-void StartGame(GameManager* manager)
-{
-	ResetGame(manager);
-}
-
 void ResetGame(GameManager* manager)
 {
 	manager->won = 0;
@@ -76,21 +71,8 @@ void UpdateGame(GameManager* manager, sfClock * clock)
 	int deltaTime = sfTime_asMilliseconds(sfClock_getElapsedTime(clock));
 	sfClock_restart(clock);
 
-	if(!sfKeyboard_isKeyPressed(sfKeyEscape))
-	{
-		manager->escDown = 0;
-	}
-
-	if(sfKeyboard_isKeyPressed(sfKeyEscape) && !manager->escDown)
-	{
-		manager->escDown = 1;
-		++manager->paused;
-		manager->paused %= 2;
-		return;
-	}
-
 	if(!manager->paused)
-	{
+	{	
 		CheckInput(manager);
 
 		if(!manager->won)
@@ -108,7 +90,16 @@ void UpdateGame(GameManager* manager, sfClock * clock)
 		else
 		{
 			printf("Player %d won!\n", manager->won);
-			ResetGame(manager);
+			++manager->players[manager->won - 1].score;
+
+			if(manager->players[manager->won - 1].score < manager->totalRounds)
+			{
+				ResetGame(manager);
+			}
+			else
+			{
+				manager->paused = 1;
+			}
 		}
 	}
 }
