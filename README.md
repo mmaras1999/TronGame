@@ -1,5 +1,5 @@
 # TronGame
-Game inspired by Tron Light Cycles made in C language. Univeristy project.
+Game inspired by Tron Light Cycles made in C language. University project.
 
 How to install:
 
